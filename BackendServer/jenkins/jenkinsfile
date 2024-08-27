@@ -1,0 +1,81 @@
+pipeline {
+    agent any
+    environment {
+        COMPOSE_TAGNAME = 'bangez'
+        PUSH_VERSION = "latest"
+        DOCKERHUB_CREDENTIALS = credentials('docker-token')
+        KUBECONFIG_CREDENTIALS = credentials("kubeconfig")
+
+        services = "gateway,eureka,analysis,user,chat,tx,land"
+    }
+
+    stages {
+        stage('Github clone') {
+            steps {
+                git branch: "main", credentialsId: 'github-token', url: "https://github.com/NohTaeHo1/Bangez-Spring-Cloud-io.git"
+            }
+        }
+
+        stage("Docker Login") {
+            steps{
+                sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
+            }
+        }
+
+        stage("Java Build") {
+            steps {
+                script {
+                    sh "chmod +x ./gradlew"
+                    sh "./gradlew clean build"
+                }
+            }
+        }
+
+        stage("Docker Image Remove") {
+            steps {
+                script {
+                    services.split(',').each { service ->
+                        sh "docker rmi -f $COMPOSE_TAGNAME/${service}:$PUSH_VERSION"
+                        sh "docker rmi -f $DOCKERHUB_CREDENTIALS_USR/bangez-${service}-service:$PUSH_VERSION"
+                    }
+                }
+            }
+        }
+
+        stage("Docker Image Build") {
+            steps {
+                sh "docker compose build"
+            }
+        }
+
+        stage("Docker Image Tag") {
+            steps {
+                script {
+                    services.split(',').each { service ->
+                       sh "docker tag $COMPOSE_TAGNAME/bangez-${service}-service:$PUSH_VERSION $DOCKERHUB_CREDENTIALS_USR/$service:$PUSH_VERSION"
+                    }
+                }
+            }
+        }
+
+        stage("Docker Push") {
+            steps {
+                script {
+                    services.split(',').each { service ->
+                        sh "docker push $DOCKERHUB_CREDENTIALS_USR/bangez-${service}-service:$PUSH_VERSION"
+                    }
+                }
+            }
+        }
+
+        stage('Apply Kubernetes files') {
+            steps {
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh "kubectl --kubeconfig=$HOME/.ncloud/kubeconfig.yml get nodes"
+                    sh "kubectl --kubeconfig=$HOME/.ncloud/kubeconfig.yml apply -f ./k8s/bangez-deployment.yml"
+                    sh "kubectl --kubeconfig=$HOME/.ncloud/kubeconfig.yml apply -f ./k8s/bangez-service.yml"
+                }
+            }
+        }
+    }
+}
