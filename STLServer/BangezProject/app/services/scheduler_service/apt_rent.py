@@ -25,7 +25,7 @@ async def apt_rent_parsing():
 
     LAWD_CD_list = df['법정동시군구코드'].unique()
 
-    api_key = 'KdkuO4SDl1tiDcQGsbbxcJWaTb0FxTWt2xQ0JrXrJ4hblgEKtvgDxux84LkVgjDt3r50lENl1GmZ5HvqnuJ23Q=='
+    api_key = os.getenv('API_KEY')
 
     column_nm = ['갱신요구권사용', '건축년도', '계약구분', '계약기간', '년', '법정동', '보증금액',
                  '아파트', '월', '월세금액', '일', '전용면적', '종전계약보증금', '종전계약월세',

@@ -21,7 +21,7 @@ async def officetel_trade_parsing(deal_ymd):
 
     LAWD_CD_list = df['법정동시군구코드'].unique()
 
-    api_key = 'KdkuO4SDl1tiDcQGsbbxcJWaTb0FxTWt2xQ0JrXrJ4hblgEKtvgDxux84LkVgjDt3r50lENl1GmZ5HvqnuJ23Q=='
+    api_key = os.getenv('API_KEY')
 
     column_nm = ['거래금액', '거래유형', '건축년도', '년', '단지', '매도자', '매수자',
                  '법정동', '시군구', '월세금액', '월', '일', '전용면적', '중개사소재지',

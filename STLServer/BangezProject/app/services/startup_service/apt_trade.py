@@ -21,7 +21,7 @@ async def apt_trade_parsing(deal_ymd):
 
     LAWD_CD_list = df['법정동시군구코드'].unique()
 
-    api_key = 'KdkuO4SDl1tiDcQGsbbxcJWaTb0FxTWt2xQ0JrXrJ4hblgEKtvgDxux84LkVgjDt3r50lENl1GmZ5HvqnuJ23Q=='
+    api_key = os.getenv('API_KEY')
 
     column_nm = ['거래금액', '거래유형', '건축년도', '년', '도로명', '도로명건물본번호코드', '도로명건물부번호코드',
                  '도로명시군구코드', '도로명일련번호코드', '도로명지상지하코드', '도로명코드', '동', '등기일자', '매도자', '매수자', '법정동', '법정동본번코드',

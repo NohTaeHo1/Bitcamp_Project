@@ -13,7 +13,7 @@ from app.database.startup_database import start_save_city_park
 async def city_park_parsing():
     load_dotenv()
 
-    api_key = 'KdkuO4SDl1tiDcQGsbbxcJWaTb0FxTWt2xQ0JrXrJ4hblgEKtvgDxux84LkVgjDt3r50lENl1GmZ5HvqnuJ23Q=='
+    api_key = os.getenv('API_KEY')
     url = 'http://api.data.go.kr/openapi/tn_pubr_public_cty_park_info_api'
     params = {'serviceKey': api_key, 'pageNo': '0', 'numOfRows': '1000000', 'type': 'xml'}
     column_nm = ['manageNo', 'parkNm', 'parkSe', 'rdnmadr', 'lnmadr', 'latitude', 'longitude',

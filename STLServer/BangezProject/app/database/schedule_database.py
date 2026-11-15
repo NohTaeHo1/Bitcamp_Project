@@ -10,7 +10,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 app = FastAPI()
 load_dotenv()
 
-client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://root:bangezez@223.130.158.84:27017/?authSource=admin')
+client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv('MONGODB_URL'))
 aptRents_collection = client.bangez_mongodb.aptRents
 aptTrades_collection = client.bangez_mongodb.aptTrades
 cityParks_collection = client.bangez_mongodb.cityParks
